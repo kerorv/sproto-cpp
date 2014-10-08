@@ -1,0 +1,6 @@
+project(demo)
+cmake_minimum_required(VERSION 2.8)
+set(SRC_LIST demo.cpp addressbookmessage.cpp sproto.cpp sprotomessage.cpp sproto.c)
+set(CMAKE_C_FLAGS "-Wall -g -O2")
+set(CMAKE_CXX_FLAGS "-Wall -g -O2")
+add_executable(demo ${SRC_LIST})
