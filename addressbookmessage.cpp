@@ -46,11 +46,20 @@ bool PhoneNumberMessage::SetIntegerField(const char* name, int index,
 	}
 }
 
-std::string* PhoneNumberMessage::GetStringField(const char* name, int index)
+const char* PhoneNumberMessage::GetStringField(const char* name, int index, int& len)
 {
 	if (strcmp(name, "number") == 0)
 	{
-		return &number_;
+		if (number_.empty())
+		{
+			len = 0;
+			return NULL;
+		}
+		else
+		{
+			len = number_.length();
+			return &number_[0];
+		}
 	}
 	else
 	{
@@ -139,15 +148,33 @@ bool PersonMessage::SetIntegerField(const char* name, int index,
 	}
 }
 
-std::string* PersonMessage::GetStringField(const char* name, int index)
+const char* PersonMessage::GetStringField(const char* name, int index, int& len)
 {
 	if (strcmp(name, "name") == 0)
 	{
-		return &name_;
+		if (name_.empty())
+		{
+			len = 0;
+			return NULL;
+		}
+		else
+		{
+			len = name_.length();
+			return &name_[0];
+		}
 	}
 	else if (strcmp(name, "email") == 0)
 	{
-		return &email_;
+		if (email_.empty())
+		{
+			len = 0;
+			return NULL;
+		}
+		else
+		{
+			len = email_.length();
+			return &email_[0];
+		}
 	}
 	else
 	{

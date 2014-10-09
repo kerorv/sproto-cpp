@@ -65,15 +65,17 @@ static int EncodeCallback(void *ud, const char *tagname, int type,
 		break;
 	case SPROTO_TSTRING:
 		{
-			std::string* field_value = ep->msg->GetStringField(tagname, index);
+			int field_length = 0;
+			const char* field_value = ep->msg->GetStringField(tagname, index, 
+					field_length);
 			if (field_value == NULL)
 				return 0;
 
-			if ((int)field_value->length() > length)
+			if (field_length > length)
 				return -1;
 
-			memcpy(value, field_value->c_str(), field_value->length());
-			return field_value->length();
+			memcpy(value, field_value, field_length);
+			return field_length;
 		}
 		break;
 	case SPROTO_TSTRUCT:
@@ -186,23 +188,36 @@ int Sproto::Encode(SprotoMessage* msg)
 	if (st == NULL)
 		return -1;
 
-	for (;;)
+	try
 	{
-		EncodeParam ep;
-		ep.msg = msg;
-		ep.deeplevel = 0;
+		for (;;)
+		{
+			EncodeParam ep;
+			ep.msg = msg;
+			ep.deeplevel = 0;
 
-		int ret = sproto_encode(st, encbuf_, (int)encbuf_size_, 
-				EncodeCallback,	&ep);
-		if (ret == -1)
-		{
-			if (!ResizeBuffer())
-				return -1;
+			int ret = sproto_encode(st, encbuf_, (int)encbuf_size_, 
+					EncodeCallback,	&ep);
+			if (ret == -1)
+			{
+				if (!ResizeBuffer())
+					return -1;
+			}
+			else
+			{
+				return ret;
+			}
 		}
-		else
-		{
-			return ret;
-		}
+	}
+	catch (std::runtime_error e)
+	{
+		// TODO
+		e.what();
+		return -1;
+	}
+	catch (...)
+	{
+		return -1;
 	}
 }
 
@@ -215,6 +230,20 @@ bool Sproto::Decode(SprotoMessage* msg, const char* buffer, size_t size)
 	DecodeParam dp;
 	dp.msg = msg;
 	dp.deeplevel = 0;
-	return (sproto_decode(st, buffer, (int)size, DecodeCallback, &dp) >= 0);
+	try
+	{
+		int ret = sproto_decode(st, buffer, (int)size, DecodeCallback, &dp);
+		return (ret >= 0);
+	}
+	catch (std::runtime_error e)
+	{
+		// TODO
+		e.what();
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
 }
 

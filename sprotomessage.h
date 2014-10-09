@@ -13,7 +13,7 @@ public:
 	virtual bool SetIntegerField(const char* name, int index, int64_t value);
 	virtual bool GetBooleanField(const char* name, int index, bool& value);
 	virtual bool SetBooleanField(const char* name, int index, bool value);
-	virtual std::string* GetStringField(const char* name, int index);
+	virtual const char* GetStringField(const char* name, int index, int& len);
 	virtual bool SetStringField(const char* name, int index, const char* value,
 			int len);
 	virtual SprotoMessage* GetStructField(const char* name, int index);

@@ -62,6 +62,8 @@ int main(int argc, char* argv[])
 	tom->SetName("Tom");
 	tom->SetEmail("tom@cartoon.com");
 	abm.AddPerson(tom);
+	std::cout << "abm1 dump:" << std::endl;
+	abm.Dump();
 
 	Sproto sp(pb.c_str(), pb.length());
 	int len = sp.Encode(&abm);
@@ -83,6 +85,7 @@ int main(int argc, char* argv[])
 
 	std::cout << "Decode ok." << std::endl;
 
+	std::cout << "abm2 dump:" << std::endl;
 	abm2.Dump();
 }
 

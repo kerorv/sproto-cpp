@@ -13,7 +13,7 @@ public:
 	virtual std::string GetMessageName();
 	virtual bool GetIntegerField(const char* name, int index, int64_t& value);
 	virtual bool SetIntegerField(const char* name, int index, int64_t value);
-	virtual std::string* GetStringField(const char* name, int index);
+	virtual const char* GetStringField(const char* name, int index, int& len);
 	virtual bool SetStringField(const char* name, int index, 
 			const char* value, int len);
 
@@ -35,7 +35,7 @@ public:
 	virtual std::string GetMessageName();
 	virtual bool GetIntegerField(const char* name, int index, int64_t& value);
 	virtual bool SetIntegerField(const char* name, int index, int64_t value);
-	virtual std::string* GetStringField(const char* name, int index);
+	virtual const char* GetStringField(const char* name, int index, int& len);
 	virtual bool SetStringField(const char* name, int index, 
 			const char* value, int len);
 	virtual SprotoMessage* GetStructField(const char* name, int index);

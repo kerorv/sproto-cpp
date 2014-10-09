@@ -20,7 +20,7 @@ bool SprotoMessage::SetBooleanField(const char* name, int index, bool value)
 	return false;
 }
 
-std::string* SprotoMessage::GetStringField(const char* name, int index)
+const char* SprotoMessage::GetStringField(const char* name, int index, int& len)
 {
 	return NULL;
 }
