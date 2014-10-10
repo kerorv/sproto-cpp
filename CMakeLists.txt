@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(cppsproto)
-set(LIB_SRC sproto.cpp sprotomessage.cpp sproto.c)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -O2 -fPIC")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g -O2 -fPIC")
+set(LIB_SRC cppsproto.cpp sproto.c sprotomessage.cpp)
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -g -O2 -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -g")
 set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 add_library(cppsproto STATIC ${LIB_SRC})
 

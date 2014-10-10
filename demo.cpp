@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include "sproto.hpp"
+#include "cppsproto.h"
 #include "addressbookmessage.h"
 
 bool LoadPbfile(const char* filename, std::string& pb)

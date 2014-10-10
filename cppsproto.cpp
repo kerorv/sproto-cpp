@@ -4,7 +4,7 @@
 extern "C" {
 #include "sproto.h"
 }
-#include "sproto.hpp"
+#include "cppsproto.h"
 
 #define MAX_DEEPLEVEL	64	
 
