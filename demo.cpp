@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 	std::cout << "abm1 dump:" << std::endl;
 	abm.Dump();
 
-	Sproto sp(pb.c_str(), pb.length());
+	CppSproto sp(pb.c_str(), pb.length());
 	int len = sp.Encode(&abm);
 	if (len == -1)
 	{

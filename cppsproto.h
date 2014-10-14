@@ -6,12 +6,12 @@
 #define MAX_ENCBUFFER_SIZE		0x100000	// 1M
 
 struct sproto;
-class Sproto
+class CppSproto
 {
 public:
-	Sproto(const char* proto_bin, size_t pbsize, 
+	CppSproto(const char* proto_bin, size_t pbsize, 
 			size_t init_encbuf_size = INIT_ENCBUFFER_SIZE);
-	~Sproto();
+	~CppSproto();
 
 	int Encode(SprotoMessage* msg);
 	const char* GetEncodedBuffer() const { return encbuf_; }

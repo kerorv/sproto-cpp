@@ -156,20 +156,20 @@ static int DecodeCallback(void *ud, const char *tagname, int type,
 	return 0;
 }
 
-Sproto::Sproto(const char* proto_bin, size_t pbsize, size_t init_encbuf_size)
+CppSproto::CppSproto(const char* proto_bin, size_t pbsize, size_t init_encbuf_size)
 {
 	sp_ = sproto_create(proto_bin, pbsize);
 	encbuf_ = (char*)malloc(init_encbuf_size);
 	encbuf_size_ = init_encbuf_size;
 }
 
-Sproto::~Sproto()
+CppSproto::~CppSproto()
 {
 	sproto_release(sp_);
 	free(encbuf_);
 }
 
-bool Sproto::ResizeBuffer()
+bool CppSproto::ResizeBuffer()
 {
 	if (encbuf_size_ >= MAX_ENCBUFFER_SIZE)
 		return false;
@@ -182,7 +182,7 @@ bool Sproto::ResizeBuffer()
 	return true;
 }
 
-int Sproto::Encode(SprotoMessage* msg)
+int CppSproto::Encode(SprotoMessage* msg)
 {
 	struct sproto_type* st = sproto_type(sp_, msg->GetMessageName().c_str());
 	if (st == NULL)
@@ -221,7 +221,7 @@ int Sproto::Encode(SprotoMessage* msg)
 	}
 }
 
-bool Sproto::Decode(SprotoMessage* msg, const char* buffer, size_t size)
+bool CppSproto::Decode(SprotoMessage* msg, const char* buffer, size_t size)
 {
 	struct sproto_type* st = sproto_type(sp_, msg->GetMessageName().c_str());
 	if (st == NULL)
