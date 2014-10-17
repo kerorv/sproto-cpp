@@ -1,12 +1,12 @@
-#include <stdlib.h>
 #include <string.h>
 #include <stdexcept>
 extern "C" {
 #include "sproto.h"
 }
+#include "sprotomessage.h"
 #include "cppsproto.h"
 
-#define MAX_DEEPLEVEL	64	
+#define MAX_DEEPLEVEL			64	
 
 struct EncodeParam
 {
@@ -156,72 +156,72 @@ static int DecodeCallback(void *ud, const char *tagname, int type,
 	return 0;
 }
 
-CppSproto::CppSproto(const char* proto_bin, size_t pbsize, size_t init_encbuf_size)
+CppSproto::CppSproto()
+	: sp_(NULL)
 {
-	sp_ = sproto_create(proto_bin, pbsize);
-	encbuf_ = (char*)malloc(init_encbuf_size);
-	encbuf_size_ = init_encbuf_size;
 }
 
 CppSproto::~CppSproto()
 {
-	sproto_release(sp_);
-	free(encbuf_);
+	if (sp_)
+	{
+		sproto_release(sp_);
+		sp_ = NULL;
+	}
 }
 
-bool CppSproto::ResizeBuffer()
+bool CppSproto::Init(const char* pbfiles)
 {
-	if (encbuf_size_ >= MAX_ENCBUFFER_SIZE)
+	// TODO
+	return false;
+}
+
+bool CppSproto::Init(const char* proto_bin, size_t pbsize)
+{
+	sp_ = sproto_create(proto_bin, pbsize);
+	if (sp_ == NULL)
 		return false;
 
-	encbuf_size_ *= 2;
-	if (encbuf_size_ > MAX_ENCBUFFER_SIZE)
-		encbuf_size_ = MAX_ENCBUFFER_SIZE;
-
-	encbuf_ = (char*)realloc(encbuf_, encbuf_size_);
 	return true;
 }
 
-int CppSproto::Encode(SprotoMessage* msg)
+bool CppSproto::Encode(SprotoMessage* msg, char* encbuf, int& size)
 {
 	struct sproto_type* st = sproto_type(sp_, msg->GetMessageName().c_str());
 	if (st == NULL)
-		return -1;
+		return false;
 
 	try
 	{
-		for (;;)
-		{
-			EncodeParam ep;
-			ep.msg = msg;
-			ep.deeplevel = 0;
+		EncodeParam ep;
+		ep.msg = msg;
+		ep.deeplevel = 0;
 
-			int ret = sproto_encode(st, encbuf_, (int)encbuf_size_, 
-					EncodeCallback,	&ep);
-			if (ret == -1)
-			{
-				if (!ResizeBuffer())
-					return -1;
-			}
-			else
-			{
-				return ret;
-			}
+		int ret = sproto_encode(st, encbuf, size, EncodeCallback, &ep);
+		if (ret == -1)
+		{
+			size = -1;
+			return false;
+		}
+		else
+		{
+			size = ret;
+			return true;
 		}
 	}
 	catch (std::runtime_error e)
 	{
 		// TODO
 		e.what();
-		return -1;
+		return false;
 	}
 	catch (...)
 	{
-		return -1;
+		return false;
 	}
 }
 
-bool CppSproto::Decode(SprotoMessage* msg, const char* buffer, size_t size)
+bool CppSproto::Decode(SprotoMessage* msg, const char* decbuf, int size)
 {
 	struct sproto_type* st = sproto_type(sp_, msg->GetMessageName().c_str());
 	if (st == NULL)
@@ -232,7 +232,7 @@ bool CppSproto::Decode(SprotoMessage* msg, const char* buffer, size_t size)
 	dp.deeplevel = 0;
 	try
 	{
-		int ret = sproto_decode(st, buffer, (int)size, DecodeCallback, &dp);
+		int ret = sproto_decode(st, decbuf, (int)size, DecodeCallback, &dp);
 		return (ret >= 0);
 	}
 	catch (std::runtime_error e)
@@ -245,5 +245,25 @@ bool CppSproto::Decode(SprotoMessage* msg, const char* buffer, size_t size)
 	{
 		return false;
 	}
+}
+
+int CppSproto::Pack(const char* src, int src_size, char* dest, int dest_size)
+{
+	if (dest == NULL)
+	{
+		// from lsproto.c
+		// the worst-case space overhead of packing is 2 bytes per 2 KiB of input (256 words = 2KiB).
+		size_t maxsz = (src_size + 2047) / 2048 * 2 + src_size;
+		return (int)maxsz;
+	}
+	else
+	{
+		return sproto_pack(src, src_size, dest, dest_size);
+	}
+}
+
+int CppSproto::Unpack(const char* src, int src_size, char* dest, int dest_size)
+{
+	return sproto_unpack(src, src_size, dest, dest_size);
 }
 

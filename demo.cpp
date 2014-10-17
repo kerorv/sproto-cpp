@@ -65,19 +65,30 @@ int main(int argc, char* argv[])
 	std::cout << "abm1 dump:" << std::endl;
 	abm.Dump();
 
-	CppSproto sp(pb.c_str(), pb.length());
-	int len = sp.Encode(&abm);
-	if (len == -1)
+	static char buffer[1024];
+	int size = sizeof(buffer);
+	CppSproto sp;
+	if (!sp.Init(pb.data(), pb.length()))
+	{
+		std::cout << "create CppSproto fail" << std::endl;
+		return -1;
+	}
+
+	if (!sp.Encode(&abm, buffer, size))
 	{
 		std::cout << "Encode fail" << std::endl;
+		if (size == -1)
+		{
+			std::cout << "buffer size is too small" << std::endl;
+		}
 		return -1;
 	}
 
 	// SaveMsgfile("addressbook2.msg", sp.GetEncodedBuffer(), len);
-	std::cout << "Encode ok.(" << len << " bytes)" << std::endl;
+	std::cout << "Encode ok.(" << size << " bytes)" << std::endl;
 
 	AddressBookMessage abm2;
-	if (!sp.Decode(&abm2, sp.GetEncodedBuffer(), len))
+	if (!sp.Decode(&abm2, buffer, size))
 	{
 		std::cout << "Decode fail" << std::endl;
 		return -1;

@@ -1,28 +1,21 @@
 #pragma once
 
-#include "sprotomessage.h"
-
-#define INIT_ENCBUFFER_SIZE		0x1000		// 4K
-#define MAX_ENCBUFFER_SIZE		0x100000	// 1M
-
 struct sproto;
+class SprotoMessage;
 class CppSproto
 {
 public:
-	CppSproto(const char* proto_bin, size_t pbsize, 
-			size_t init_encbuf_size = INIT_ENCBUFFER_SIZE);
+	CppSproto();
 	~CppSproto();
 
-	int Encode(SprotoMessage* msg);
-	const char* GetEncodedBuffer() const { return encbuf_; }
-	bool Decode(SprotoMessage* msg, const char* buffer, size_t size);
-
-private:
-	bool ResizeBuffer();
+	bool Init(const char* pbfiles);
+	bool Init(const char* proto_bin, size_t pbsize);
+	bool Encode(SprotoMessage* msg, char* encbuf, int& size);
+	bool Decode(SprotoMessage* msg, const char* decbuf, int size);
+	int Pack(const char* src, int src_size, char* dest, int dest_size);
+	int Unpack(const char* src, int src_size, char* dest, int dest_size);
 
 private:
 	sproto* sp_;
-	char* encbuf_;
-	size_t encbuf_size_;
 };
 
